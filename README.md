@@ -1,2 +1,2 @@
-# users-bundle
+# Users Bundle
 RadPHP Users Bundle

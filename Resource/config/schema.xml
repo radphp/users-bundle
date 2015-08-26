@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <table name="users" alias="Users" tableClass="Users\Domain\Table\UsersTable"
+           entityClass="Users\Domain\Entity\User">
+        <column name="id" type="biginteger" null="false"/>
+        <column name="username" type="string" null="false"/>
+        <column name="email" type="string" null="false"/>
+        <column name="password" type="string" null="false"/>
+        <column name="status" type="integer" default="0" null="false" comment="inactive, active, banned"/>
+        <column name="created_at" type="datetime"/>
+        <column name="updated_at" type="datetime"/>
+
+        <unique>
+            <unique-column name="username"/>
+        </unique>
+        <unique>
+            <unique-column name="email"/>
+        </unique>
+        <primary>
+            <primary-column name="id"/>
+        </primary>
+        <index>
+            <index-column name="created_at"/>
+        </index>
+        <index>
+            <index-column name="updated_at"/>
+        </index>
+    </table>
+</database>
