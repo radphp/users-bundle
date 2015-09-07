@@ -2,29 +2,40 @@
 
 namespace Users;
 
-use Rad\Core\Bundle;
+use Rad\Core\AbstractBundle;
 use Rad\Configure\Config;
 use Rad\Authentication\Auth;
 use Users\Event\UsersSubscriber;
 use Rad\Authentication\Storage\SessionStorage;
 
 /**
- * Bootstrap
+ * Users Bundle
  *
  * @package Users
  */
-class Bootstrap extends Bundle
+class UsersBundle extends AbstractBundle
 {
     /**
      * {@inheritdoc}
      */
     public function startup()
     {
-        parent::startup();
-
-        Config::load(__DIR__ . DS . 'Resource' . DS . 'config' . DS . 'config.php');
         $this->getEventManager()->addSubscriber(new UsersSubscriber());
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function loadConfig()
+    {
+        Config::load(__DIR__ . DS . 'Resource' . DS . 'config' . DS . 'config.php');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function loadService()
+    {
         if (false === $this->getContainer()->has('auth')) {
             $this->getContainer()->set(
                 'auth',
