@@ -8,7 +8,10 @@ use Rad\Authentication\Exception\CredentialInvalidException;
 use Rad\Authentication\Exception\IdentityNotFoundException;
 use Rad\Authentication\Provider\SimpleAuthentication;
 use Rad\DependencyInjection\Container;
-use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Users\Base\BaseUsersAction;
 
 /**
@@ -22,6 +25,11 @@ class LoginAction extends BaseUsersAction
      * @var bool
      */
     public $needsAuthentication = false;
+
+    /**
+     * @var Form
+     */
+    protected $form;
 
     /**
      * Get method
@@ -43,7 +51,9 @@ class LoginAction extends BaseUsersAction
         $this->getResponder()->setData('form', $this->getForm());
         $request = $this->getRequest()->getParsedBody();
 
-        if (!empty($request)) {
+        $this->getForm()->handleRequest(new Request($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER));
+
+        if ($this->getForm()->isSubmitted() && $this->getForm()->isValid()) {
             $simpleAuth = new SimpleAuthentication($request['form']['username'], $request['form']['password']);
             $simpleAuth->setRepository(CakeORMRepository::create()
                 ->setScope(['Users.status' => 1]));
@@ -69,15 +79,20 @@ class LoginAction extends BaseUsersAction
      */
     public function getForm()
     {
-        $formFactory = Forms::createFormFactory();
+        if ($this->form) {
+            return $this->form;
+        }
+
+        /** @var FormFactory $formFactory */
+        $formFactory = $this->getContainer()->get('form_factory');
         $options = [
             'action' => Container::get('router')->generateUrl(['users', 'login']),
             'method' => 'POST'
         ];
 
-        return $formFactory->createBuilder('form', null, $options)
-            ->add('username', 'text', ['required' => true])
-            ->add('password', 'password', ['required' => true])
+        return $this->form = $formFactory->createBuilder('form', null, $options)
+            ->add('username', 'text', ['required' => false, 'constraints' => new NotBlank()])
+            ->add('password', 'password', ['required' => false, 'constraints' => new NotBlank()])
             ->add('login', 'submit')
             ->getForm();
     }
