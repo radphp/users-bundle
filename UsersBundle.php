@@ -2,6 +2,7 @@
 
 namespace Users;
 
+use Admin\Library\Menu;
 use Rad\Core\AbstractBundle;
 use Rad\Configure\Config;
 use Rad\Authentication\Auth;
@@ -21,6 +22,7 @@ class UsersBundle extends AbstractBundle
     public function startup()
     {
         $this->getEventManager()->addSubscriber(new UsersSubscriber());
+        $this->getEventManager()->attach(Menu::EVENT_GET_MENU, [$this, 'addAdminMenu']);
     }
 
     /**
@@ -47,5 +49,15 @@ class UsersBundle extends AbstractBundle
                 }
             );
         }
+    }
+
+    /**
+     * Add required menu for admin panel
+     */
+    public function addAdminMenu()
+    {
+        $parent = Menu::addMenu('Users', 'fa-file-text');
+        Menu::addMenu('Users', '', '/admin/bundles/users', 100, $parent);
+        Menu::addMenu('Add User', '', '/admin/bundles/users/new', 110, $parent);
     }
 }
