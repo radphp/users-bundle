@@ -49,7 +49,7 @@ class UsersSubscriber implements EventSubscriberInterface
         /** @var Auth $authentication */
         $auth = $this->getContainer()->get('auth');
 
-        if ($this->needsAuthentication($event->getSubject()) && !$auth->isAuthenticate()) {
+        if ($this->needsAuthentication($event->getSubject()) && !$auth->isAuthenticated()) {
             $event->setResult(new Response\RedirectResponse(self::LOGIN_ROUTE));
         }
     }
