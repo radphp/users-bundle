@@ -24,7 +24,7 @@ class LoginResponder extends AppResponder
      */
     public function __invoke()
     {
-        if ($this->getAuth()->isAuthenticate()) {
+        if ($this->getAuth()->isAuthenticated()) {
             return new RedirectResponse(Config::get('users.authentication.loginRedirect', '/'));
         }
 
