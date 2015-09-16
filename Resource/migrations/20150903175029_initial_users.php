@@ -35,7 +35,7 @@ CREATE INDEX "users_updated_at_index" ON "users" ("updated_at");
 COMMENT ON COLUMN "users"."status" IS \'inactive, active, banned\';
 
 CREATE TABLE "user_details" (
-"id" BIGINT NOT NULL,
+"id" BIGSERIAL NOT NULL,
 "user_id" BIGINT NOT NULL,
 "key" VARCHAR NOT NULL,
 "value" TEXT,
