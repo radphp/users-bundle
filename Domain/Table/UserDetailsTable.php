@@ -16,7 +16,6 @@ class UserDetailsTable extends Table
      */
     public function initialize(array $config)
     {
-        $this->primaryKey(['user_id', 'key']);
         $this->belongsTo(
             'Users',
             [

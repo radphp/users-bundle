@@ -7,6 +7,7 @@ use Cake\ORM\TableRegistry;
 use Rad\Cryptography\Password\DefaultPassword;
 use Rad\Network\Http\Response\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Users\Domain\Entity\User;
 use Users\Domain\Entity\UserDetail;
 use Users\Domain\Table\UsersTable;
 use Users\Library\Form;
@@ -32,28 +33,29 @@ class PostMethodAction extends AppAction
         $form->handleRequest(new Request($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER));
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = [
-                'username' => $formValues['username'],
-                'email' => $formValues['email'],
-                'status' => $formValues['status'],
-                'password' => (new DefaultPassword())->hash($formValues['password']),
-                'details' => [
-                    new UserDetail([
-                        'key' => 'first_name',
-                        'value' => strip_tags($formValues['first_name'])
-                    ]),
-                    new UserDetail([
-                        'key' => 'middle_name',
-                        'value' => strip_tags($formValues['middle_name'])
-                    ]),
-                    new UserDetail([
-                        'key' => 'last_name',
-                        'value' => strip_tags($formValues['last_name'])
-                    ])
-                ]
-            ];
+            /** @var User $user */
+            $user = $usersTable->newEntity();
+            $user->set('username', $formValues['username'])
+                ->set('email', $formValues['email'])
+                ->set('status', $formValues['status'])
+                ->set('password', (new DefaultPassword())->hash($formValues['password']))
+                ->set('details',
+                    [
+                        new UserDetail([
+                            'key' => 'first_name',
+                            'value' => strip_tags($formValues['first_name'])
+                        ]),
+                        new UserDetail([
+                            'key' => 'middle_name',
+                            'value' => strip_tags($formValues['middle_name'])
+                        ]),
+                        new UserDetail([
+                            'key' => 'last_name',
+                            'value' => strip_tags($formValues['last_name'])
+                        ])
+                    ]);
 
-            $usersTable->save($usersTable->newEntity($data));
+            $usersTable->save($user);
 
             return new RedirectResponse($this->getRouter()->generateUrl(['users']));
         }

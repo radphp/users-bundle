@@ -46,13 +46,15 @@ class GetMethodAction extends AppAction
     {
         $usersTable = TableRegistry::get('Users.Users');
 
+        $query = $usersTable->find()
+            ->contain('UserDetails');
+
         if (null !== $id) {
-            return $usersTable->find()
-                ->where(['id' => $id])
+            return $query->where(['id' => $id])
                 ->first();
         }
 
-        return $usersTable->find();
+        return $query;
     }
 
     /**

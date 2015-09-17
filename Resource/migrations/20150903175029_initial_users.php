@@ -35,13 +35,13 @@ CREATE INDEX "users_updated_at_index" ON "users" ("updated_at");
 COMMENT ON COLUMN "users"."status" IS \'inactive, active, banned\';
 
 CREATE TABLE "user_details" (
-"id" BIGSERIAL NOT NULL,
+"id" BIGSERIAL,
 "user_id" BIGINT NOT NULL,
 "key" VARCHAR NOT NULL,
 "value" TEXT,
 CONSTRAINT "user_details_users_user_id_id_foreign" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY IMMEDIATE,
-CONSTRAINT "user_details_user_id_key_unique" UNIQUE ("user_id", "key")
-);
+PRIMARY KEY ("id")
+)
 ');
     }
 }

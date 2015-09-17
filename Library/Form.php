@@ -45,9 +45,13 @@ class Form
      */
     public function getForm(User $user = null)
     {
-        $data = null;
+        $data = [];
         if ($user) {
-            $data = $user->toArray();
+            foreach ($user->getUserDetails() as $key => $value) {
+                $data[$key] = $value;
+            }
+
+            $data += $user->toArray();
         }
 
         $action = $user ? $this->get('router')->generateUrl(['users', $data['id']]) :

@@ -7,6 +7,7 @@ use Cake\ORM\TableRegistry;
 use Rad\Cryptography\Password\DefaultPassword;
 use Rad\Network\Http\Response\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Users\Domain\Entity\User;
 use Users\Domain\Entity\UserDetail;
 use Users\Domain\Table\UsersTable;
 use Users\Library\Form;
@@ -36,32 +37,41 @@ class PutMethodAction extends AppAction
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UsersTable $usersTable */
             $usersTable = TableRegistry::get('Users.Users');
-            $data = [
-                'id' => $id,
-                'username' => $formValues['username'],
-                'email' => $formValues['email'],
-                'status' => $formValues['status'],
-                'details' => [
-                    new UserDetail([
-                        'key' => 'first_name',
-                        'value' => strip_tags($formValues['first_name'])
-                    ]),
-                    new UserDetail([
-                        'key' => 'middle_name',
-                        'value' => strip_tags($formValues['middle_name'])
-                    ]),
-                    new UserDetail([
-                        'key' => 'last_name',
-                        'value' => strip_tags($formValues['last_name'])
-                    ])
-                ]
-            ];
 
-            if (!empty($formValues['password'])) {
-                $data['password'] = (new DefaultPassword())->hash($formValues['password']);
+            /** @var User $user */
+            $user = $usersTable->get($id, ['contain' => 'UserDetails']);
+            $userDetailsTable = TableRegistry::get('UserDetails.UserDetails');
+
+            $detailsKey = ['first_name', 'middle_name', 'last_name'];
+            $tmpDetails = [];
+            foreach ($detailsKey as $key) {
+                if (array_key_exists($key, $user->getUserDetails())) {
+                    $userDetail = $userDetailsTable->find()
+                        ->where(['key' => $key, 'user_id' => $id])
+                        ->first();
+                    $userDetail->set('value', strip_tags($formValues[$key]));
+                } else {
+                    $userDetail = new UserDetail([
+                        'user_id' => $id,
+                        'key' => $key,
+                        'value' => strip_tags($formValues[$key])
+                    ]);
+                }
+
+                $tmpDetails[] = $userDetail;
             }
 
-            $usersTable->save($usersTable->newEntity($data));
+            $user->set('id', $id)
+                ->set('username', $formValues['username'])
+                ->set('email', $formValues['email'])
+                ->set('status', $formValues['status'])
+                ->set('details', $tmpDetails);
+
+            if (!empty($formValues['password'])) {
+                $user->set('password', (new DefaultPassword())->hash($formValues['password']));
+            }
+
+            $usersTable->save($user);
 
             return new RedirectResponse($this->getRouter()->generateUrl(['users']));
         }
