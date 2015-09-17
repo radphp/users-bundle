@@ -37,10 +37,6 @@
         <primary>
             <primary-column name="id"/>
         </primary>
-        <unique>
-            <unique-column name="user_id"/>
-            <unique-column name="key"/>
-        </unique>
         <foreign foreignTable="users" onUpdate="noAction" onDelete="cascade">
             <reference local="user_id" foreign="id"/>
         </foreign>
