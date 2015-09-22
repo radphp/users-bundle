@@ -41,4 +41,68 @@
             <reference local="user_id" foreign="id"/>
         </foreign>
     </table>
+
+    <table name="roles" alias="Roles" tableClass="Users\Domain\Table\RolesTable"
+           entityClass="Users\Domain\Entity\Role">
+        <column name="id" type="biginteger" null="false"/>
+        <column name="name" type="string" null="false"/>
+        <column name="title" type="string"/>
+        <column name="description" type="text"/>
+
+        <primary>
+            <primary-column name="id"/>
+        </primary>
+        <unique>
+            <unique-column name="name"/>
+        </unique>
+    </table>
+
+    <table name="user_roles" alias="UserRoles" tableClass="Users\Domain\Table\UserRolesTable"
+           entityClass="Users\Domain\Entity\UserRole">
+        <column name="user_id" type="biginteger" null="false"/>
+        <column name="role_id" type="biginteger" null="false"/>
+
+        <primary>
+            <primary-column name="user_id"/>
+            <primary-column name="role_id"/>
+        </primary>
+        <foreign foreignTable="users" onUpdate="noAction" onDelete="cascade">
+            <reference local="user_id" foreign="id"/>
+        </foreign>
+        <foreign foreignTable="roles" onUpdate="noAction" onDelete="cascade">
+            <reference local="role_id" foreign="id"/>
+        </foreign>
+    </table>
+
+    <table name="resources" alias="Resources" tableClass="Users\Domain\Table\ResourcesTable"
+           entityClass="Users\Domain\Entity\Resource">
+        <column name="id" type="biginteger" null="false"/>
+        <column name="name" type="string" null="false"/>
+        <column name="title" type="string"/>
+        <column name="description" type="text"/>
+
+        <primary>
+            <primary-column name="id"/>
+        </primary>
+        <unique>
+            <unique-column name="name"/>
+        </unique>
+    </table>
+
+    <table name="role_resources" alias="RoleResources" tableClass="Users\Domain\Table\RoleResourcesTable"
+           entityClass="Users\Domain\Entity\RoleResource">
+        <column name="role_id" type="biginteger" null="false"/>
+        <column name="resource_id" type="biginteger" null="false"/>
+
+        <primary>
+            <primary-column name="role_id"/>
+            <primary-column name="resource_id"/>
+        </primary>
+        <foreign foreignTable="roles" onUpdate="noAction" onDelete="cascade">
+            <reference local="role_id" foreign="id"/>
+        </foreign>
+        <foreign foreignTable="resources" onUpdate="noAction" onDelete="cascade">
+            <reference local="resource_id" foreign="id"/>
+        </foreign>
+    </table>
 </database>
