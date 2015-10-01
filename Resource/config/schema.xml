@@ -48,6 +48,8 @@
         <column name="name" type="string" null="false"/>
         <column name="title" type="string"/>
         <column name="description" type="text"/>
+        <column name="created_at" type="datetime"/>
+        <column name="updated_at" type="datetime"/>
 
         <primary>
             <primary-column name="id"/>
