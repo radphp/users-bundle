@@ -1,0 +1,13 @@
+{% extends getMasterTwig() %}
+
+{% set title = 'Roles' %}
+
+{% block base %}{{ generateUrl(['users', 'roles'], false, true, false) }}/{% endblock %}
+
+{% block content %}
+    <div id="main">
+        <div>
+            {{ table|raw }}
+        </div>
+    </div>
+{% endblock %}

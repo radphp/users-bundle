@@ -4,17 +4,19 @@ namespace Users\Domain\Table;
 use Cake\ORM\Table;
 
 /**
- * Users Table
+ * Roles Table
  *
  * @package Users\Domain\Table
  */
-class UsersTable extends Table
+class RolesTable extends Table
 {
     /**
      * {@inheritdoc}
      */
     public function initialize(array $config)
     {
+        parent::initialize($config);
+
         $this->addBehavior('Timestamp', [
             'events' => [
                 'Model.beforeSave' => [
@@ -24,24 +26,25 @@ class UsersTable extends Table
             ]
         ]);
 
-        $this->hasMany(
-            'UserDetails',
+        $this->belongsToMany(
+            'Resources',
             [
-                'className' => 'UserDetails',
-                'foreignKey' => 'user_id',
+                'className' => 'Resources',
+                'joinTable' => 'role_resources',
+                'foreignKey' => 'role_id',
                 'dependent' => true,
-                'propertyName' => 'details'
+                'propertyName' => 'resources'
             ]
         );
 
         $this->belongsToMany(
-            'Roles',
+            'Users',
             [
-                'className' => 'Roles',
+                'className' => 'Users',
                 'joinTable' => 'user_roles',
-                'foreignKey' => 'user_id',
+                'foreignKey' => 'role_id',
                 'dependent' => true,
-                'propertyName' => 'roles'
+                'propertyName' => 'users'
             ]
         );
     }

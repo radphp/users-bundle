@@ -40,37 +40,41 @@ class PutMethodAction extends AppAction
 
             /** @var User $user */
             $user = $usersTable->get($id, ['contain' => 'UserDetails']);
-            $userDetailsTable = TableRegistry::get('UserDetails.UserDetails');
 
             $detailsKey = ['first_name', 'middle_name', 'last_name'];
             $tmpDetails = [];
+            $currentUserDetails = $user->getUserDetails(null, null, true);
+
             foreach ($detailsKey as $key) {
-                if (array_key_exists($key, $user->getUserDetails())) {
-                    $userDetail = $userDetailsTable->find()
-                        ->where(['key' => $key, 'user_id' => $id])
-                        ->first();
-                    $userDetail->set('value', strip_tags($formValues[$key]));
-                } else {
-                    $userDetail = new UserDetail([
+                if (array_key_exists($key, $currentUserDetails)) {
+                    $tmpDetails[] = [
+                        'id' => $currentUserDetails[$key]->get('id'),
                         'user_id' => $id,
                         'key' => $key,
                         'value' => strip_tags($formValues[$key])
-                    ]);
+                    ];
+                } else {
+                    $tmpDetails[] = [
+                        'user_id' => $id,
+                        'key' => $key,
+                        'value' => strip_tags($formValues[$key])
+                    ];
                 }
-
-                $tmpDetails[] = $userDetail;
             }
 
-            $user->set('id', $id)
-                ->set('username', $formValues['username'])
-                ->set('email', $formValues['email'])
-                ->set('status', $formValues['status'])
-                ->set('details', $tmpDetails);
+            $data = [
+                'username' => $formValues['username'],
+                'email' => $formValues['email'],
+                'status' => $formValues['status'],
+                'details' => $tmpDetails,
+                'roles' => ['_ids' => $formValues['roles']]
+            ];
 
             if (!empty($formValues['password'])) {
-                $user->set('password', (new DefaultPassword())->hash($formValues['password']));
+                $data['password'] = (new DefaultPassword())->hash($formValues['password']);
             }
 
+            $usersTable->patchEntity($user, $data, ['associated' => ['UserDetails', 'Roles']]);
             $usersTable->save($user);
 
             return new RedirectResponse($this->getRouter()->generateUrl(['users']));

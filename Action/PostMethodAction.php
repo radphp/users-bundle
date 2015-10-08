@@ -7,6 +7,7 @@ use Cake\ORM\TableRegistry;
 use Rad\Cryptography\Password\DefaultPassword;
 use Rad\Network\Http\Response\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Users\Domain\Entity\Role;
 use Users\Domain\Entity\User;
 use Users\Domain\Entity\UserDetail;
 use Users\Domain\Table\UsersTable;
@@ -33,12 +34,18 @@ class PostMethodAction extends AppAction
         $form->handleRequest(new Request($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER));
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $roles = [];
+            foreach ($formValues['roles'] as $role) {
+                $roles[] = new Role(['id' => $role]);
+            }
+
             /** @var User $user */
             $user = $usersTable->newEntity();
             $user->set('username', $formValues['username'])
                 ->set('email', $formValues['email'])
                 ->set('status', $formValues['status'])
                 ->set('password', (new DefaultPassword())->hash($formValues['password']))
+                ->set('roles', $roles)
                 ->set('details',
                     [
                         new UserDetail([

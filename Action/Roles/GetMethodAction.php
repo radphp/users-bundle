@@ -1,27 +1,27 @@
 <?php
 
-namespace Users\Action;
+namespace Users\Action\Roles;
 
 use App\Action\AppAction;
 use Cake\ORM\TableRegistry;
+use Users\Domain\Entity\Role;
 use Users\Library\Form;
 use DataTable\Column;
 use DataTable\DataSource\ServerSide\CakePHP;
 use DataTable\Table;
 use Twig\Library\Helper as TwigHelper;
-use Users\Domain\Entity\User;
 
 /**
  * Get Method Action
  *
- * @package Users\Action
+ * @package Users\Roles\Action
  */
 class GetMethodAction extends AppAction
 {
     /**
      * Invoke Action
      *
-     * @param int $id User id
+     * @param int $id Role id
      *
      * @return void
      * @throws \Rad\Core\Exception\BaseException
@@ -29,26 +29,25 @@ class GetMethodAction extends AppAction
     public function __invoke($id = null)
     {
         if (null !== $id) {
-            $this->getResponder()->setData('form', Form::create()->getForm($this->getUsers($id)));
+            $this->getResponder()->setData('form', Form::create()->getRoleForm($this->getRoles($id)));
         } else {
             $this->getResponder()->setData('table', $this->getDataTable());
         }
     }
 
     /**
-     * Get users
+     * Get roles
      *
-     * @param null $id User id
+     * @param null $id Role id
      *
      * @return \Cake\ORM\Query|mixed
      */
-    protected function getUsers($id = null)
+    protected function getRoles($id = null)
     {
-        $usersTable = TableRegistry::get('Users.Users');
+        $rolesTable = TableRegistry::get('Users.Roles');
 
-        $query = $usersTable->find()
-            ->contain('Roles')
-            ->contain('UserDetails');
+        $query = $rolesTable->find()
+            ->contain('Resources');
 
         if (null !== $id) {
             return $query->where(['id' => $id])
@@ -70,13 +69,13 @@ class GetMethodAction extends AppAction
         TwigHelper::addJs('file:///Admin/vendor/jquery/dist/jquery.min.js', 20);
         TwigHelper::addJs('file:///Admin/vendor/datatables/media/js/jquery.dataTables.min.js', 100);
         TwigHelper::addJs('
-        function deleteUser(id) {
-    if (confirm(\'Delete this user?\')) {
+        function deleteRole(id) {
+    if (confirm(\'Delete this role?\')) {
         $.ajax({
             type: "DELETE",
-            url: \'users/\' + id,
+            url: \'roles/\' + id,
             success: function(affectedRows) {
-                if (affectedRows > 0) window.location = \'users\';
+                if (affectedRows > 0) window.location = \'users/roles\';
             }
         });
     }
@@ -84,41 +83,30 @@ class GetMethodAction extends AppAction
 
         $table = new Table();
         $col = new Column();
-        $col->setTitle('Username')
-            ->setData('Users.username');
+        $col->setTitle('name')
+            ->setData('Roles.name');
         $table->addColumn($col);
 
         $col = new Column();
-        $col->setTitle('Email')
-            ->setData('Users.email');
-        $table->addColumn($col);
-
-        $col = new Column();
-        $col->setTitle('Status')
-            ->setData('Users.status')
-            ->isSearchable(false)
-            ->setFormatter(function ($status, User $user) {
-                $statuses = [0 => 'Inactive', 1 => 'Active', 2 => 'Banned'];
-
-                return $statuses[$status];
-            });
+        $col->setTitle('title')
+            ->setData('Roles.title');
         $table->addColumn($col);
 
         $router = $this->getRouter();
         $col = new Column\Action();
         $col->setManager(
-            function (Column\ActionBuilder $action, User $user) use ($router) {
+            function (Column\ActionBuilder $action, Role $role) use ($router) {
                 /* TODO Admin RBAC */
                 if (true) {
                     $action->addAction(
                         'edit',
                         'Edit',
-                        $router->generateUrl(['users', $user->get('id')])
+                        $router->generateUrl(['users', 'roles', $role->get('id')])
                     );
                     $action->addAction(
                         'delete',
                         'Delete',
-                        'javascript:deleteUser("' . $user->get('id') . '");'
+                        'javascript:deleteRole("' . $role->get('id') . '");'
                     );
                 }
             }
@@ -126,7 +114,7 @@ class GetMethodAction extends AppAction
             ->setTitle('Actions');
         $table->addColumn($col);
 
-        $table->setDataSource(new CakePHP($this->getUsers(), $this->getRequest()->getRequestTarget()));
+        $table->setDataSource(new CakePHP($this->getRoles(), $this->getRequest()->getRequestTarget()));
 
         return $table;
     }
