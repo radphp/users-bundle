@@ -2,6 +2,7 @@
 
 namespace Users\Event;
 
+use Rad\Core\Action;
 use Rad\Events\Event;
 use Rad\Network\Http\Exception\Forbidden;
 use Rad\Routing\Dispatcher;
@@ -45,18 +46,17 @@ class UsersSubscriber implements EventSubscriberInterface
      */
     public function authenticate(Event $event)
     {
-        /** @var Request $request */
-        $request = $event->getData()['request'];
-
         /** @var Auth $authentication */
         $auth = $this->getContainer()->get('auth');
 
         if ($this->needsAuthentication($event->getSubject())) {
             if (!$auth->isAuthenticated()) {
                 $event->setResult(new Response\RedirectResponse(self::LOGIN_ROUTE));
+
+                return null;
             }
 
-            if (!$this->isAuthorized($event->getSubject())) {
+            if (!$this->isAuthorized($event->getData()['action'])) {
                 throw new Forbidden();
             }
         }
@@ -65,17 +65,15 @@ class UsersSubscriber implements EventSubscriberInterface
     /**
      * Check action is authorized
      *
-     * @param Dispatcher $dispatcher
+     * @param Action $action
      *
      * @return bool
      */
-    protected function isAuthorized(Dispatcher $dispatcher)
+    protected function isAuthorized(Action $action)
     {
-        $actionNS = $dispatcher->getActionNamespace();
-
         if (
-            is_callable([$actionNS, 'isAuthorized'])
-            && false === (bool)call_user_func([$actionNS, 'isAuthorized'])
+            is_callable([$action, 'isAuthorized'])
+            && false === (bool)call_user_func([$action, 'isAuthorized'])
         ) {
             return false;
         }
