@@ -4,6 +4,7 @@ namespace Users;
 
 use Admin\Library\Menu;
 use Cake\ORM\TableRegistry;
+use Rad\Authentication\UserDetails;
 use Rad\Authorization\Rbac;
 use Rad\Core\AbstractBundle;
 use Rad\Configure\Config;
@@ -47,7 +48,20 @@ class UsersBundle extends AbstractBundle
                 'auth',
                 function () {
                     $storage = new SessionStorage($this->getContainer()->get('session'));
-                    $authentication = new Auth($storage);
+                    $userDetails = new UserDetails(function ($userData) {
+                        /** @var RolesTable $rolesTable */
+                        $rolesTable = TableRegistry::get('Users.Roles');
+                        $roles = $rolesTable->find('list', ['keyField' => 'id', 'valueField' => 'name'])
+                            ->matching('Users', function ($q) use ($userData) {
+                                return $q->where(['Users.id' => $userData['id']]);
+                            });
+
+                        $userData['roles'] = $roles->toArray();
+
+                        return $userData;
+                    });
+
+                    $authentication = new Auth($storage, $userDetails);
 
                     return $authentication;
                 }
