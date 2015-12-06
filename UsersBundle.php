@@ -2,13 +2,13 @@
 
 namespace Users;
 
-use Admin\Library\Menu;
 use Cake\ORM\TableRegistry;
 use Rad\Authentication\UserDetails;
 use Rad\Authorization\Rbac;
 use Rad\Core\AbstractBundle;
 use Rad\Configure\Config;
 use Rad\Authentication\Auth;
+use Rad\Stuff\Admin\Menu;
 use Users\Domain\Entity\Role;
 use Users\Domain\Table\RolesTable;
 use Users\Event\UsersSubscriber;
@@ -26,7 +26,7 @@ class UsersBundle extends AbstractBundle
      */
     public function startup()
     {
-        $this->getEventManager()->addSubscriber(new UsersSubscriber());
+        //$this->getEventManager()->addSubscriber(new UsersSubscriber());
         $this->getEventManager()->attach(Menu::EVENT_GET_MENU, [$this, 'addAdminMenu']);
     }
 
@@ -109,11 +109,34 @@ class UsersBundle extends AbstractBundle
      */
     public function addAdminMenu()
     {
-        $parent = Menu::addMenu('Users', 'fa-file-text');
-        Menu::addMenu('Users', '', '/admin/bundles/users', 100, $parent);
-        Menu::addMenu('Add User', '', '/admin/bundles/users/new', 110, $parent);
-        Menu::addMenu('Roles', '', '/admin/bundles/users/roles', 120, $parent);
-        Menu::addMenu('Add Role', '', '/admin/bundles/users/roles/new', 130, $parent);
+        $menuItem1 = (new Menu())
+            ->setLabel('Users')
+            ->setLink('/admin/bundles/users')
+            ->setOrder(100);
 
+        $menuItem2 = (new Menu())
+            ->setLabel('Add User')
+            ->setLink('/admin/bundles/users/new')
+            ->setOrder(110);
+
+        $menuItem3 = (new Menu())
+            ->setLabel('Roles')
+            ->setLink('/admin/bundles/users/roles')
+            ->setOrder(120);
+
+        $menuItem4 = (new Menu())
+            ->setLabel('Add Role')
+            ->setLink('/admin/bundles/users/roles/new')
+            ->setOrder(130);
+
+        $root = new Menu();
+        $root->setLabel('Users')
+            ->setIcon('fa-file-text')
+            ->setOrder(999)
+            ->addChild($menuItem1)
+            ->addChild($menuItem2)
+            ->addChild($menuItem3)
+            ->addChild($menuItem4)
+            ->setAsRoot();
     }
 }
