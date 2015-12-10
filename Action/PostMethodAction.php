@@ -11,6 +11,7 @@ use Users\Domain\Entity\Role;
 use Users\Domain\Entity\User;
 use Users\Domain\Entity\UserDetail;
 use Users\Domain\Table\UsersTable;
+use Users\Library\AuthorizationTrait;
 use Users\Library\Form;
 
 /**
@@ -20,6 +21,8 @@ use Users\Library\Form;
  */
 class PostMethodAction extends AppAction
 {
+    use AuthorizationTrait;
+
     /**
      * {@inheritdoc}
      */

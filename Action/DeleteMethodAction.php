@@ -6,6 +6,7 @@ use App\Action\AppAction;
 use Cake\ORM\TableRegistry;
 use Rad\Network\Http\Response;
 use Users\Domain\Table\UsersTable;
+use Users\Library\AuthorizationTrait;
 
 /**
  * Delete Method Action
@@ -14,6 +15,8 @@ use Users\Domain\Table\UsersTable;
  */
 class DeleteMethodAction extends AppAction
 {
+    use AuthorizationTrait;
+
     /**
      * Invoke delete method
      *

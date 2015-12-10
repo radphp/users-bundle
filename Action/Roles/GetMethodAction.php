@@ -5,6 +5,7 @@ namespace Users\Action\Roles;
 use App\Action\AppAction;
 use Cake\ORM\TableRegistry;
 use Users\Domain\Entity\Role;
+use Users\Library\AuthorizationTrait;
 use Users\Library\Form;
 use DataTable\Column;
 use DataTable\DataSource\ServerSide\CakePHP;
@@ -18,6 +19,8 @@ use Twig\Library\Helper as TwigHelper;
  */
 class GetMethodAction extends AppAction
 {
+    use AuthorizationTrait;
+
     /**
      * Invoke Action
      *

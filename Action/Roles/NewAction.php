@@ -3,6 +3,7 @@
 namespace Users\Action\Roles;
 
 use App\Action\AppAction;
+use Users\Library\AuthorizationTrait;
 use Users\Library\Form;
 
 /**
@@ -12,6 +13,8 @@ use Users\Library\Form;
  */
 class NewAction extends AppAction
 {
+    use AuthorizationTrait;
+
     /**
      * @var bool
      */

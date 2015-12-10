@@ -4,6 +4,7 @@ namespace Users\Action;
 
 use App\Action\AppAction;
 use Cake\ORM\TableRegistry;
+use Users\Library\AuthorizationTrait;
 use Users\Library\Form;
 use DataTable\Column;
 use DataTable\DataSource\ServerSide\CakePHP;
@@ -18,6 +19,8 @@ use Users\Domain\Entity\User;
  */
 class GetMethodAction extends AppAction
 {
+    use AuthorizationTrait;
+
     /**
      * Invoke Action
      *

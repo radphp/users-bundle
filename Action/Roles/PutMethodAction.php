@@ -8,6 +8,7 @@ use Rad\Network\Http\Response\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Users\Domain\Entity\Role;
 use Users\Domain\Table\RolesTable;
+use Users\Library\AuthorizationTrait;
 use Users\Library\Form;
 
 /**
@@ -17,6 +18,8 @@ use Users\Library\Form;
  */
 class PutMethodAction extends AppAction
 {
+    use AuthorizationTrait;
+
     /**
      * Invoke put action
      *

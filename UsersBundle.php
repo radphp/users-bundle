@@ -137,6 +137,7 @@ class UsersBundle extends AbstractBundle
             ->addChild($menuItem2)
             ->addChild($menuItem3)
             ->addChild($menuItem4)
+            ->setResources(['users.manage'])
             ->setAsRoot();
     }
 }
