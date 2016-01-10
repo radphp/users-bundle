@@ -49,7 +49,7 @@ class UsersSubscriber implements EventSubscriberInterface
         /** @var Auth $authentication */
         $auth = $this->getContainer()->get('auth');
 
-        if ($this->needsAuthentication($event->getSubject())) {
+        if ($this->needsAuthentication($event->getData()['action'])) {
             if (!$auth->isAuthenticated()) {
                 $event->setResult(new Response\RedirectResponse(self::LOGIN_ROUTE));
 
@@ -84,17 +84,15 @@ class UsersSubscriber implements EventSubscriberInterface
     /**
      * Needs authentication
      *
-     * @param Dispatcher $dispatcher
+     * @param Action $action
      *
      * @return bool
      */
-    protected function needsAuthentication(Dispatcher $dispatcher)
+    protected function needsAuthentication(Action $action)
     {
-        $actionNS = $dispatcher->getActionNamespace();
-
         if (
-            is_callable([$actionNS, 'needsAuthentication'])
-            && true === (bool)call_user_func([$actionNS, 'needsAuthentication'])
+            is_callable([$action, 'needsAuthentication'])
+            && true === (bool)call_user_func([$action, 'needsAuthentication'])
         ) {
             return true;
         }
