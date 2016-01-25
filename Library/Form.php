@@ -191,10 +191,48 @@ class Form
                 [
                     'choices' => $resourceList,
                     'required' => false,
-                    'constraints' => [new NotBlank()],
                     'multiple' => true
                 ]
             )
+            ->add('submit', 'submit')
+            ->getForm();
+    }
+
+    /**
+     * Get import form
+     *
+     * @return \Symfony\Component\Form\Form
+     */
+    public function getImportForm()
+    {
+        $data = [];
+
+        /** @var FormFactory $formFactory */
+        $formFactory = $this->get('form_factory');
+        $options = [
+            'method' => 'POST'
+        ];
+
+        /** @var RolesTable $rolesTable */
+        $rolesTable = TableRegistry::get('Users.Roles');
+        $roles = $rolesTable->find();
+        $roleList = [];
+
+        /** @var Role $roles */
+        foreach ($roles as $role) {
+            $title = $role->get('name');
+            if (!empty($role->get('title'))) {
+                $title = $role->get('title');
+            }
+
+            $roleList[$role->get('id')] = $title;
+        }
+
+        return $formFactory->createBuilder('form', $data, $options)
+            ->add('csv_file', 'file', [
+                'required' => true,
+                'label' => 'CSV file'
+            ])
             ->add('submit', 'submit')
             ->getForm();
     }

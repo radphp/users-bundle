@@ -6,9 +6,9 @@ use App\Action\AppAction;
 use Users\Library\Form;
 
 /**
- * New Page Action
+ * New User Action
  *
- * @package Categories\Action
+ * @package Users\Action
  */
 class NewAction extends AppAction
 {

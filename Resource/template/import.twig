@@ -1,0 +1,9 @@
+{% extends getMasterTwig() %}
+{% form_theme form '@Admin/form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block content %}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+{% endblock %}
+

@@ -6,11 +6,11 @@ use App\Responder\AppResponder;
 use Twig\Library\TwigResponse;
 
 /**
- * New User Responder
+ * Import User Responder
  *
  * @package Users\Responder
  */
-class NewResponder extends AppResponder
+class ImportResponder extends AppResponder
 {
     /**
      * Get method
@@ -22,10 +22,10 @@ class NewResponder extends AppResponder
         $form = $this->getData('form');
 
         return new TwigResponse(
-            '@Users/new.twig',
+            '@Users/import.twig',
             [
                 'form' => $form->createView(),
-                'title' => 'Add a new user',
+                'title' => 'Import users',
             ]
         );
     }

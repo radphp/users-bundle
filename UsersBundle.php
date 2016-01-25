@@ -120,14 +120,19 @@ class UsersBundle extends AbstractBundle
             ->setOrder(110);
 
         $menuItem3 = (new Menu())
-            ->setLabel('Roles')
-            ->setLink('/admin/bundles/users/roles')
+            ->setLabel('Import User')
+            ->setLink('/admin/bundles/users/import')
             ->setOrder(120);
 
         $menuItem4 = (new Menu())
+            ->setLabel('Roles')
+            ->setLink('/admin/bundles/users/roles')
+            ->setOrder(130);
+
+        $menuItem5 = (new Menu())
             ->setLabel('Add Role')
             ->setLink('/admin/bundles/users/roles/new')
-            ->setOrder(130);
+            ->setOrder(140);
 
         $root = new Menu();
         $root->setLabel('Users')
@@ -137,6 +142,7 @@ class UsersBundle extends AbstractBundle
             ->addChild($menuItem2)
             ->addChild($menuItem3)
             ->addChild($menuItem4)
+            ->addChild($menuItem5)
             ->setResources(['users.manage'])
             ->setAsRoot();
     }
