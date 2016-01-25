@@ -52,7 +52,7 @@ class ImportAction extends AppAction
 
             $user->set('username', $row['username'])
                 ->set('email', isset($row['email']) ? $row['email'] : '')
-                ->set('status', isset($row['status']) ? $row['status'] : '')
+                ->set('status', isset($row['status']) ? $row['status'] : 1)
                 ->set('password', (new DefaultPassword())->hash($row['password']))
                 ->set('roles', explode(',', $row['roles']))
                 ->set('details',
