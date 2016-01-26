@@ -4,7 +4,7 @@
            entityClass="Users\Domain\Entity\User">
         <column name="id" type="biginteger" null="false"/>
         <column name="username" type="string" null="false"/>
-        <column name="email" type="string" null="false"/>
+        <column name="email" type="string" null="true"/>
         <column name="password" type="string" null="false"/>
         <column name="status" type="integer" default="0" null="false" comment="inactive, active, banned"/>
         <column name="created_at" type="datetime"/>

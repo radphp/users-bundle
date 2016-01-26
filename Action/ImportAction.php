@@ -51,7 +51,7 @@ class ImportAction extends AppAction
             $user = $usersTable->newEntity();
 
             $user->set('username', $row['username'])
-                ->set('email', isset($row['email']) ? $row['email'] : '')
+                ->set('email', isset($row['email']) ? $row['email'] : null)
                 ->set('status', isset($row['status']) ? $row['status'] : 1)
                 ->set('password', (new DefaultPassword())->hash($row['password']))
                 ->set('roles', explode(',', $row['roles']))
@@ -71,7 +71,9 @@ class ImportAction extends AppAction
                         ])
                     ]);
 
-            $usersTable->save($user);
+            try {
+                $usersTable->save($user, ['checkExisting' => false]);
+            } catch (\Exception $e) {}
         }
     }
 
