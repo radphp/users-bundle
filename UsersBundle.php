@@ -26,7 +26,7 @@ class UsersBundle extends AbstractBundle
      */
     public function startup()
     {
-        //$this->getEventManager()->addSubscriber(new UsersSubscriber());
+        $this->getEventManager()->addSubscriber(new UsersSubscriber());
         $this->getEventManager()->attach(Menu::EVENT_GET_MENU, [$this, 'addAdminMenu']);
     }
 

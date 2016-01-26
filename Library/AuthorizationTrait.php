@@ -30,7 +30,7 @@ trait AuthorizationTrait
         /** @var Auth $auth */
         $auth = $this->getContainer()->get('auth');
         foreach ($auth->getStorage()->read()['roles'] as $roleName) {
-            if (true === $rbac->isGranted($roleName, 'categories.manage')) {
+            if (true === $rbac->isGranted($roleName, 'users.manage')) {
                 return true;
             }
         }

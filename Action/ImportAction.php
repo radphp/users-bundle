@@ -8,6 +8,7 @@ use Rad\Cryptography\Password\DefaultPassword;
 use Rad\DependencyInjection\Container;
 use Rad\Network\Http\Request\UploadedFile;
 use Users\Domain\Entity\UserDetail;
+use Users\Library\AuthorizationTrait;
 use Users\Library\Form;
 
 /**
@@ -17,10 +18,7 @@ use Users\Library\Form;
  */
 class ImportAction extends AppAction
 {
-    /**
-     * @var bool
-     */
-    public $needsAuthentication = true;
+    use AuthorizationTrait;
 
     /**
      * Get method

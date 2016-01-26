@@ -72,7 +72,8 @@ class UsersSubscriber implements EventSubscriberInterface
     protected function isAuthorized(Action $action)
     {
         if (
-            is_callable([$action, 'isAuthorized'])
+            method_exists($action, 'isAuthorized')
+            && is_callable([$action, 'isAuthorized'])
             && false === (bool)call_user_func([$action, 'isAuthorized'])
         ) {
             return false;
@@ -91,7 +92,8 @@ class UsersSubscriber implements EventSubscriberInterface
     protected function needsAuthentication(Action $action)
     {
         if (
-            is_callable([$action, 'needsAuthentication'])
+            method_exists($action, 'needsAuthentication')
+            && is_callable([$action, 'needsAuthentication'])
             && true === (bool)call_user_func([$action, 'needsAuthentication'])
         ) {
             return true;
